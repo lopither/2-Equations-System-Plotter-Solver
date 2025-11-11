@@ -1,0 +1,421 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[     16170,        413]
+NotebookOptionsPosition[     15757,        397]
+NotebookOutlinePosition[     16211,        415]
+CellTagsIndexPosition[     16168,        412]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+   "Helper", " ", "to", " ", "safely", " ", "parse", " ", "user", " ", 
+    "input"}], "*)"}], 
+  RowBox[{
+   RowBox[{
+    RowBox[{"safeParse", "[", "input_", "]"}], ":=", 
+    RowBox[{"Quiet", "@", 
+     RowBox[{"Check", "[", 
+      RowBox[{
+       RowBox[{"ToExpression", "[", 
+        RowBox[{"input", ",", "StandardForm", ",", "Hold"}], "]"}], ",", 
+       "$Failed"}], "]"}]}]}], "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", 
+    RowBox[{"Prompt", " ", "for", " ", "two", " ", "equations"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"eq1Input", "=", 
+     RowBox[{
+     "InputString", 
+      "[", "\"\<Enter the first equation in x and y (e.g., y == 2 x + 1):\>\"",
+       "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"eq2Input", "=", 
+     RowBox[{
+     "InputString", 
+      "[", "\"\<Enter the second equation in x and y (e.g., y == -x + 3):\>\"",
+       "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"heldEq1", "=", 
+     RowBox[{"safeParse", "[", "eq1Input", "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"heldEq2", "=", 
+     RowBox[{"safeParse", "[", "eq2Input", "]"}]}], ";"}], 
+   "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", 
+    RowBox[{"Validate", " ", "both", " ", "are", " ", "equations"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"!", 
+       RowBox[{"MatchQ", "[", 
+        RowBox[{"heldEq1", ",", 
+         RowBox[{"Hold", "[", "_Equal", "]"}]}], "]"}]}], "||", 
+      RowBox[{"!", 
+       RowBox[{"MatchQ", "[", 
+        RowBox[{"heldEq2", ",", 
+         RowBox[{"Hold", "[", "_Equal", "]"}]}], "]"}]}]}], ",", 
+     RowBox[{
+     "Print", "[", "\"\<Please enter valid equations using '=='. Example: y \
+== 2 x + 1\>\"", "]"}], ",", 
+     RowBox[{"(*", 
+      RowBox[{"Release", " ", "Hold", " ", "to", " ", "evaluate"}], "*)"}], 
+     RowBox[{
+      RowBox[{"eq1", "=", 
+       RowBox[{"ReleaseHold", "[", "heldEq1", "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"eq2", "=", 
+       RowBox[{"ReleaseHold", "[", "heldEq2", "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{"Solve", " ", "system"}], "*)"}], 
+      RowBox[{"intersection", "=", 
+       RowBox[{"Quiet", "@", 
+        RowBox[{"Solve", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"eq1", ",", "eq2"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"x", ",", "y"}], "}"}], ",", "Reals"}], "]"}]}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"points", "=", 
+       RowBox[{"N", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"x", ",", "y"}], "}"}], "/.", " ", "intersection"}], 
+        "]"}]}], ";", 
+      RowBox[{"(*", 
+       RowBox[{"numerical", " ", "coordinates"}], "*)"}], 
+      RowBox[{"labels", "=", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"\"\<A\>\"", ",", "\"\<B\>\"", ",", "\"\<C\>\"", 
+          ",", "\"\<D\>\""}], "}"}], "[", 
+        RowBox[{"[", 
+         RowBox[{";;", 
+          RowBox[{"Length", "[", "points", "]"}]}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"points", "===", 
+          RowBox[{"{", "}"}]}], "||", 
+         RowBox[{"!", 
+          RowBox[{"VectorQ", "[", 
+           RowBox[{
+            RowBox[{"Flatten", "[", "points", "]"}], ",", "NumericQ"}], 
+           "]"}]}]}], ",", 
+        RowBox[{"Print", "[", "\"\<No real intersections found.\>\"", "]"}], ",", 
+        RowBox[{"(*", 
+         RowBox[{
+          RowBox[{"Attempt", " ", "to", " ", "find", " ", "y"}], "-", 
+          RowBox[{"axis", " ", "intersections", " ", 
+           RowBox[{"(", 
+            RowBox[{"x", "=", "0"}], ")"}]}]}], "*)"}], 
+        RowBox[{
+         RowBox[{"yInt1", "=", 
+          RowBox[{"Quiet", "@", 
+           RowBox[{"Solve", "[", 
+            RowBox[{
+             RowBox[{"eq1", "/.", " ", 
+              RowBox[{"x", "->", "0"}]}], ",", "y", ",", "Reals"}], "]"}]}]}],
+          ";", "\[IndentingNewLine]", 
+         RowBox[{"yInt2", "=", 
+          RowBox[{"Quiet", "@", 
+           RowBox[{"Solve", "[", 
+            RowBox[{
+             RowBox[{"eq2", "/.", " ", 
+              RowBox[{"x", "->", "0"}]}], ",", "y", ",", "Reals"}], "]"}]}]}],
+          ";", "\[IndentingNewLine]", 
+         RowBox[{"yIntVals", "=", 
+          RowBox[{"DeleteCases", "[", 
+           RowBox[{
+            RowBox[{"Flatten", "[", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"y", "/.", " ", "yInt1"}], ",", 
+               RowBox[{"y", "/.", " ", "yInt2"}]}], "}"}], "]"}], ",", 
+            "_Solve"}], "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"yIntVals", "=", 
+          RowBox[{"Select", "[", 
+           RowBox[{"yIntVals", ",", "NumericQ"}], "]"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"(*", 
+          RowBox[{"Determine", " ", "plot", " ", "range", " ", 
+           RowBox[{"dynamically", ":", 
+            RowBox[{
+             RowBox[{"includes", " ", "intersections", " ", "and", " ", "y"}],
+              "-", 
+             RowBox[{"axis", " ", "crosses"}]}]}]}], "*)"}], 
+         RowBox[{"allX", "=", 
+          RowBox[{"Join", "[", 
+           RowBox[{
+            RowBox[{"points", "[", 
+             RowBox[{"[", 
+              RowBox[{"All", ",", "1"}], "]"}], "]"}], ",", 
+            RowBox[{"{", "0", "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"allY", "=", 
+          RowBox[{"Join", "[", 
+           RowBox[{
+            RowBox[{"points", "[", 
+             RowBox[{"[", 
+              RowBox[{"All", ",", "2"}], "]"}], "]"}], ",", "yIntVals"}], 
+           "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"xMin", "=", 
+          RowBox[{"Min", "[", 
+           RowBox[{
+            RowBox[{"-", "10"}], ",", 
+            RowBox[{
+             RowBox[{"Min", "[", "allX", "]"}], "-", "5"}]}], "]"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"xMax", "=", 
+          RowBox[{"Max", "[", 
+           RowBox[{"10", ",", 
+            RowBox[{
+             RowBox[{"Max", "[", "allX", "]"}], "+", "5"}]}], "]"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"yMin", "=", 
+          RowBox[{"Min", "[", 
+           RowBox[{
+            RowBox[{"-", "10"}], ",", 
+            RowBox[{
+             RowBox[{"Min", "[", "allY", "]"}], "-", "5"}]}], "]"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"yMax", "=", 
+          RowBox[{"Max", "[", 
+           RowBox[{"10", ",", 
+            RowBox[{
+             RowBox[{"Max", "[", "allY", "]"}], "+", "5"}]}], "]"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"xRange", "=", 
+          RowBox[{"{", 
+           RowBox[{"xMin", ",", "xMax"}], "}"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"yRange", "=", 
+          RowBox[{"{", 
+           RowBox[{"yMin", ",", "yMax"}], "}"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"(*", 
+          RowBox[{
+          "Detect", " ", "vertical", " ", "lines", " ", "and", " ", "create", 
+           " ", "plotting", " ", "functions", " ", "accordingly"}], "*)"}], 
+         RowBox[{
+          RowBox[{"toPlotGraphics", "[", 
+           RowBox[{"eq_", ",", "color_"}], "]"}], ":=", 
+          RowBox[{"Module", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"solY", ",", "solX"}], "}"}], ",", 
+            RowBox[{
+             RowBox[{"solY", "=", 
+              RowBox[{"Quiet", "[", 
+               RowBox[{"Solve", "[", 
+                RowBox[{"eq", ",", "y"}], "]"}], "]"}]}], ";", 
+             "\[IndentingNewLine]", 
+             RowBox[{"solX", "=", 
+              RowBox[{"Quiet", "[", 
+               RowBox[{"Solve", "[", 
+                RowBox[{"eq", ",", "x"}], "]"}], "]"}]}], ";", 
+             "\[IndentingNewLine]", 
+             RowBox[{"Which", "[", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"solY", "=!=", 
+                 RowBox[{"{", "}"}]}], "&&", 
+                RowBox[{"FreeQ", "[", 
+                 RowBox[{"solY", ",", "Solve"}], "]"}]}], ",", 
+               RowBox[{"Plot", "[", 
+                RowBox[{
+                 RowBox[{"y", "/.", " ", 
+                  RowBox[{"solY", "[", 
+                   RowBox[{"[", "1", "]"}], "]"}]}], ",", 
+                 RowBox[{"{", 
+                  RowBox[{"x", ",", 
+                   RowBox[{"xRange", "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], ",", 
+                   RowBox[{"xRange", "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}], "}"}], ",", 
+                 RowBox[{"PlotStyle", "->", "color"}], ",", 
+                 RowBox[{"PlotRange", "->", "yRange"}]}], "]"}], ",", 
+               RowBox[{
+                RowBox[{"solX", "=!=", 
+                 RowBox[{"{", "}"}]}], "&&", 
+                RowBox[{"FreeQ", "[", 
+                 RowBox[{"solX", ",", "Solve"}], "]"}]}], ",", 
+               RowBox[{"Graphics", "[", 
+                RowBox[{"{", 
+                 RowBox[{"color", ",", "Thick", ",", 
+                  RowBox[{"Line", "[", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"x", "/.", " ", 
+                    RowBox[{"solX", "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], ",", 
+                    RowBox[{"yRange", "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"x", "/.", " ", 
+                    RowBox[{"solX", "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], ",", 
+                    RowBox[{"yRange", "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}], "}"}]}], "}"}], "]"}]}],
+                  "}"}], "]"}], ",", "True", ",", 
+               RowBox[{"Graphics", "[", 
+                RowBox[{"{", "}"}], "]"}]}], "]"}]}]}], "]"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"curve1", "=", 
+          RowBox[{"toPlotGraphics", "[", 
+           RowBox[{"eq1", ",", "Blue"}], "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"curve2", "=", 
+          RowBox[{"toPlotGraphics", "[", 
+           RowBox[{"eq2", ",", "Red"}], "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"(*", 
+          RowBox[{
+           RowBox[{
+           "Mark", " ", "and", " ", "label", " ", "intersections", " ", 
+            "with", " ", "A"}], ",", "B", ",", "..."}], "*)"}], 
+         RowBox[{"markers", "=", 
+          RowBox[{"Graphics", "[", 
+           RowBox[{"{", 
+            RowBox[{"Red", ",", 
+             RowBox[{"PointSize", "[", "Large", "]"}], ",", 
+             RowBox[{"Point", "[", "points", "]"}], ",", 
+             RowBox[{"Table", "[", 
+              RowBox[{
+               RowBox[{"Text", "[", 
+                RowBox[{
+                 RowBox[{"Style", "[", 
+                  RowBox[{
+                   RowBox[{"labels", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], ",", "13", ",", "White", ",",
+                    "Bold", ",", 
+                   RowBox[{"Background", "->", "Black"}]}], "]"}], ",", 
+                 RowBox[{
+                  RowBox[{"points", "[", 
+                   RowBox[{"[", "i", "]"}], "]"}], "+", 
+                  RowBox[{"{", 
+                   RowBox[{"0.5", ",", "0.5"}], "}"}]}]}], "]"}], ",", 
+               RowBox[{"{", 
+                RowBox[{"i", ",", 
+                 RowBox[{"Length", "[", "points", "]"}]}], "}"}]}], "]"}]}], 
+            "}"}], "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"(*", 
+          RowBox[{"Combine", " ", "visuals"}], "*)"}], 
+         RowBox[{"plot", "=", 
+          RowBox[{"Show", "[", 
+           RowBox[{"curve1", ",", "curve2", ",", "markers", ",", 
+            RowBox[{"PlotRange", "->", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"xMin", ",", "xMax"}], "}"}], ",", 
+               RowBox[{"{", 
+                RowBox[{"yMin", ",", "yMax"}], "}"}]}], "}"}]}], ",", 
+            RowBox[{"AxesLabel", "->", 
+             RowBox[{"{", 
+              RowBox[{"\"\<x\>\"", ",", "\"\<y\>\""}], "}"}]}], ",", 
+            RowBox[{
+            "PlotLabel", 
+             "->", "\"\<System of Equations and Intersections\>\""}]}], 
+           "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"(*", 
+          RowBox[{"Create", " ", "readable", " ", "coordinate", " ", "text"}],
+           "*)"}], 
+         RowBox[{"coordText", "=", 
+          RowBox[{"StringJoin", "[", 
+           RowBox[{"Riffle", "[", 
+            RowBox[{
+             RowBox[{"Table", "[", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"labels", "[", 
+                 RowBox[{"[", "i", "]"}], "]"}], "<>", "\"\< = \>\"", "<>", 
+                RowBox[{"ToString", "[", 
+                 RowBox[{
+                  RowBox[{"N", "[", 
+                   RowBox[{
+                    RowBox[{"points", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], ",", "3"}], "]"}], ",", 
+                  "InputForm"}], "]"}]}], ",", 
+               RowBox[{"{", 
+                RowBox[{"i", ",", 
+                 RowBox[{"Length", "[", "points", "]"}]}], "}"}]}], "]"}], 
+             ",", "\"\<,  \>\""}], "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"(*", 
+          RowBox[{
+          "Display", " ", "everything", " ", "side", " ", "by", " ", "side"}],
+           "*)"}], 
+         RowBox[{"Grid", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"{", 
+             RowBox[{"plot", ",", 
+              RowBox[{"Column", "[", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{
+                  RowBox[{"Style", "[", 
+                   RowBox[{
+                    RowBox[{"\"\<Equation 1 (blue): \>\"", "<>", 
+                    RowBox[{"ToString", "[", 
+                    RowBox[{"eq1", ",", "InputForm"}], "]"}]}], ",", "14", ",",
+                     "Blue", ",", "Bold"}], "]"}], ",", 
+                  RowBox[{"Style", "[", 
+                   RowBox[{
+                    RowBox[{"\"\<Equation 2 (red): \>\"", "<>", 
+                    RowBox[{"ToString", "[", 
+                    RowBox[{"eq2", ",", "InputForm"}], "]"}]}], ",", "14", ",",
+                     "Red", ",", "Bold"}], "]"}], ",", 
+                  RowBox[{"Spacer", "[", "10", "]"}], ",", 
+                  RowBox[{"Style", "[", 
+                   
+                   RowBox[{"\"\<Intersections:\>\"", ",", "14", ",", "White", 
+                    ",", "Bold"}], "]"}], ",", 
+                  RowBox[{"Style", "[", 
+                   RowBox[{
+                   "coordText", ",", "13", ",", "White", ",", "Bold"}], 
+                   "]"}]}], "}"}], ",", 
+                RowBox[{"Spacings", "->", "1.5"}]}], "]"}]}], "}"}], "}"}], ",", 
+           RowBox[{"Spacings", "->", 
+            RowBox[{"{", 
+             RowBox[{"2", ",", "1"}], "}"}]}]}], "]"}]}]}], "]"}]}]}], 
+    "]"}]}]}]], "Input",ExpressionUUID->"ce13022c-4902-1b4b-8b27-\
+4452ee04b234"]
+},
+WindowSize->{1152, 585.6},
+WindowMargins->{{
+  Automatic, -5.399999999999864}, {-5.399999999999977, Automatic}},
+LightDark->"Dark",
+FrontEndVersion->"14.3 for Microsoft Windows (64-bit) (July 8, 2025)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"05a09410-c733-bc45-af59-d3cd913aa03e"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[554, 20, 15199, 375, 922, "Input",ExpressionUUID->"ce13022c-4902-1b4b-8b27-4452ee04b234"]
+}
+]
+*)
+
